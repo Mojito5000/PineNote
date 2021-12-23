@@ -1,0 +1,53 @@
+Notes
+
+Loading reload the usb didn't work as per the wiki:
+sudo udevadm --control reload
+
+used the following instead:
+sudo udevadm control --reload-rules && sudo udevadm trigger
+
+Need to install ARM development tools
+https://dev.to/offlinemark/how-to-set-up-an-arm64-playground-on-ubuntu-18-04-27i6
+
+
+----
+What's needed to build BSP Linux 
+----
+
+sudo apt install imagemagick python3-pip device-tree-compiler musl musl-too libc6-armel-cross libc6-dev-armel-cross binuti -arm-linux-gnueabi libncurses5-dev build-essential bison flex libssl-dev bc gcc make gcc-aarch64-linux-gnu binuti -aarch64-linux-gnu gcc-arm-linux-gnueabi gdb-multiarch qemu aarch64-linux-gnu-gcc gcc-aarch64-linux-gnu gcc-c++-aarch64-linux-gnu gcc-arm-linux-gnueabi gcc-arm* gcc-arm-linux-gnueabi
+pip install pyelftoo 
+
+git clone https://gitlab.com/pine64-org/quartz-bsp/rkdeveloptool.git
+cd rkdeveloptool/
+ 
+mkdir build
+cd build
+cmake ..
+make
+
+sudo cp 99-rk-rockusb.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules && sudo udevadm trigger
+
+git clone -b quartz64 https://gitlab.com/pgwipeout/u-boot-rockchip.git
+git clone -b rkbin https://github.com/JeffyCN/rockchip_mirrors.git rkbin
+cd u-boot-rockchip/
+export CROSS_COMPILE=aarch64-none-linux-gnu
+make rk3566-quartz64_defconfig
+
+nano make.sh  
+    Need to change python to python3
+
+./make.sh 
+
+
+----
+ebc-dev - panel driver development
+----
+ 
+
+sudo apt intall qemu-system-arm qemu-efi-aarch64 qemu-utils qemu-user qemu-user-static gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu binutils-aarch64-linux-gnu-dbg build-essential
+git clone https://gitlab.com/smaeul/ebc-dev.git
+cd ebc-dev 
+export PATH=$PATH:/home/ryan/Development/PineNote/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin
+export CROSS_COMPILE=aarch64-none-linux-gnu-
+make check
